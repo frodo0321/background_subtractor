@@ -4,8 +4,10 @@ import video
 
 class BackgroundSubtractor(object):
     def __init__(self, reference_frame, static_convergence_rate=.015, difference_threshold=.01, total_difference_threshold=.5):
-        
-        self.reference_frame=reference_frame.astype(np.float32)/255
+        if reference_frame.dtype=='uint8':
+            self.reference_frame=reference_frame.astype(np.float32)/255
+        else:
+            self.reference_frame=reference_frame
         self.frame=None
         self.corrector=np.zeros_like(reference_frame, dtype=np.float32)
         self.difference_mask=np.zeros_like(reference_frame, dtype=np.float32)
@@ -20,7 +22,10 @@ class BackgroundSubtractor(object):
 
 
     def apply(self, frame):
-        self.frame=frame.astype(np.float32)/255
+        if frame.dtype=='uint8':
+            self.frame=frame.astype(np.float32)/255.
+        else:
+            self.frame=frame
         difference=np.abs(self.frame-self.reference_frame)
 
         self.previous_difference_mask=self.difference_mask
